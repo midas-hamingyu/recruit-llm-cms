@@ -3,7 +3,7 @@ import styles from './App.module.scss';
 import {Page} from "../@typs/Page.ts";
 import {useState} from "react";
 import PageForm from "../@components/PageForm/PageForm.tsx";
-import JSONPreview from "../@components/JSONPreview.tsx";
+import JSONPreview from "../@components/JSONPreview/JSONPreview.tsx";
 import EditablePageList from "../@components/EditablePageList/EditablePageList.tsx";
 import CompanyForm from "../@components/CompanyForm/CompanyForm.tsx";
 import {Company} from "../@typs/Company.ts";
