@@ -1,114 +1,137 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styles from './EditablePageList.module.scss';
+import {Industry} from "../../@typs/Industry.ts";
 import {Page} from "../../@typs/Page.ts";
-import {Company} from "../../@typs/Company.ts";
 
 interface EditablePageListProps {
     pages: Page[];
-    companies: Company[];
-    onUpdatePage: (updatedPages: Page[]) => void;
+    companies: { name: string; Industry: Industry[] }[];
+    onUpdatePages: (updatedPages: Page[]) => void;
 }
 
-const EditablePageList: React.FC<EditablePageListProps> = ({ pages, companies, onUpdatePage }) => {
-    const [editPages, setEditPages] = useState<Page[]>(pages);
+const EditablePageList: React.FC<EditablePageListProps> = ({
+                                                               pages,
+                                                               companies,
+                                                               onUpdatePages,
+                                                           }) => {
+    const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
-    useEffect(() => {
-        setEditPages(pages);
-    }, [pages]);
-
-    const handleInputChange = (
+    const handleEditPage = (
         index: number,
-        field: keyof Page,
-        value: string | number
+        key: keyof Page,
+        value: string
     ) => {
-        const updatedPages = [...editPages];
-        updatedPages[index] = { ...updatedPages[index], [field]: value };
-
-        if (field === 'companyName') {
-            const selectedCompany = companies.find((company) => company.name === value);
-            updatedPages[index].Industry = selectedCompany ? selectedCompany.Industry : [];
-        }
-
-        setEditPages(updatedPages);
-        onUpdatePage(updatedPages);
+        const updatedPages = [...pages];
+        updatedPages[index] = { ...updatedPages[index], [key]: value }; // 개별 키 업데이트
+        onUpdatePages(updatedPages); // 부모 컴포넌트로 업데이트 전달
     };
 
-    const handleDelete = (index: number) => {
-        const updatedPages = [...editPages];
-        updatedPages.splice(index, 1);
-        setEditPages(updatedPages);
-        onUpdatePage(updatedPages);
+    const handleDeletePage = (index: number) => {
+        const updatedPages = pages.filter((_, i) => i !== index);
+        onUpdatePages(updatedPages);
+    };
+
+    const getCompanyIndustries = (companyName: string) => {
+        const company = companies.find((c) => c.name === companyName);
+        return company ? company.Industry : [];
     };
 
     return (
         <div className={styles.container}>
-            <h3 className={styles.title}>페이지 리스트 관리</h3>
-            {editPages.map((page, index) => (
-                <div key={page.pageSn} className={styles.pageItem}>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>JSON URL:</label>
-                        <input
-                            type="text"
-                            className={styles.input}
-                            value={page.pageJsonUrl}
-                            onChange={(e) =>
-                                handleInputChange(index, 'pageJsonUrl', e.target.value)
-                            }
-                        />
+            <h3>페이지 리스트</h3>
+            <div className={styles.pageList}>
+                {pages.map((page, index) => (
+                    <div key={index} className={styles.pageCard}>
+                        {expandedIndex === index ? (
+                            <div className={styles.pageDetails}>
+                                <label className={styles.label}>
+                                    페이지 이름
+                                    <input
+                                        type="text"
+                                        value={page.name}
+                                        onChange={(e) =>
+                                            handleEditPage(index, 'name', e.target.value)
+                                        }
+                                        className={styles.input}
+                                    />
+                                </label>
+                                <label className={styles.label}>
+                                    JSON URL
+                                    <input
+                                        type="text"
+                                        value={page.pageJsonUrl}
+                                        onChange={(e) =>
+                                            handleEditPage(index, 'pageJsonUrl', e.target.value)
+                                        }
+                                        className={styles.input}
+                                    />
+                                </label>
+                                <label className={styles.label}>
+                                    회사명
+                                    <select
+                                        value={page.companyName}
+                                        onChange={(e) =>
+                                            handleEditPage(index, 'companyName', e.target.value)
+                                        }
+                                        className={styles.select}
+                                    >
+                                        <option value="">회사 선택</option>
+                                        {companies.map((company) => (
+                                            <option key={company.name} value={company.name}>
+                                                {company.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </label>
+
+                                <div className={styles.companyDetails}>
+                                    <p>업종:</p>
+                                    <ul>
+                                        {getCompanyIndustries(page.companyName).map((industry) => (
+                                            <li key={industry.name}>
+                                                {industry.name} - 키워드: {industry.keywords.join(', ')}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <div className={styles.buttonGroup}>
+                                    <button
+                                        onClick={() => setExpandedIndex(null)}
+                                        className={styles.cancelButton}
+                                    >
+                                        닫기
+                                    </button>
+                                    <button
+                                        onClick={() => handleDeletePage(index)}
+                                        className={styles.deleteButton}
+                                    >
+                                        삭제
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div
+                                className={styles.pageSummary}
+                                onClick={() => setExpandedIndex(index)}
+                            >
+                                <h4>{page.name}</h4>
+                                <p>회사명: {page.companyName}</p>
+                                <p>URL: {page.pageJsonUrl}</p>
+                                <div className={styles.companyDetails}>
+                                    <p>업종:</p>
+                                    <ul>
+                                    {getCompanyIndustries(page.companyName).map((industry) => (
+                                            <li key={industry.name}>
+                                                {industry.name} - 키워드: {industry.keywords.join(', ')}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+                        )}
                     </div>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>페이지 이름:</label>
-                        <input
-                            type="text"
-                            className={styles.input}
-                            value={page.name}
-                            onChange={(e) => handleInputChange(index, 'name', e.target.value)}
-                        />
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label className={styles.label}>기업명:</label>
-                        <select
-                            className={styles.select}
-                            value={page.companyName}
-                            onChange={(e) =>
-                                handleInputChange(index, 'companyName', e.target.value)
-                            }
-                        >
-                            <option value="">선택하세요</option>
-                            {companies.map((company) => (
-                                <option key={company.name} value={company.name}>
-                                    {company.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    {page.companyName && (
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>업종 및 키워드:</label>
-                            <ul className={styles.industryList}>
-                                {page.Industry.map((industry) => (
-                                    <li key={industry.name} className={styles.industryItem}>
-                                        <div className={styles.industryName}>{industry.name}</div>
-                                        <ul className={styles.keywordList}>
-                                            {industry.keywords.map((keyword, idx) => (
-                                                <li key={idx} className={styles.keywordItem}>
-                                                    {keyword}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-                    <button
-                        className={styles.deleteButton}
-                        onClick={() => handleDelete(index)}
-                    >
-                        삭제
-                    </button>
-                </div>
-            ))}
+                ))}
+            </div>
         </div>
     );
 };

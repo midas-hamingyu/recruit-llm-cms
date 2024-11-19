@@ -42,7 +42,7 @@ const App: React.FC = () => {
 
     return (
         <div className={styles.app}>
-            <h1>JSON CMS</h1>
+            <h1>채용사이트 수집 데이터 변환기</h1>
             {/* Tabs Navigation */}
             <div className={styles.tabs}>
                 <button
@@ -96,7 +96,7 @@ const App: React.FC = () => {
                         <EditablePageList
                             pages={pages}
                             companies={companies}
-                            onUpdatePage={updatePages}
+                            onUpdatePages={updatePages}
                         />
                     </>
                 )}

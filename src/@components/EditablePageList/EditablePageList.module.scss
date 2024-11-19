@@ -6,31 +6,30 @@
   border-radius: 8px;
 }
 
-.title {
-  font-size: 1.5rem;
-  margin-bottom: 1.5rem;
-  font-weight: bold;
-  color: #333;
-}
-
-.pageItem {
-  margin-bottom: 1rem;
-  padding: 1.5rem;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.formGroup {
-  margin-bottom: 1rem;
+.pageList {
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
 }
 
-.label {
-  font-weight: bold;
-  margin-bottom: 0.5rem;
+.pageCard {
+  padding: 0.8rem;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  position: relative;
+  font-size: 0.9rem;
+}
+
+.pageSummary {
+  cursor: pointer;
+}
+
+.pageDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .input,
@@ -40,45 +39,29 @@
   border-radius: 4px;
 }
 
-.industryList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.industryItem {
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-}
-
-.industryName {
+.label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
   font-weight: bold;
-  margin-bottom: 0.5rem;
-  color: #333;
+  gap: 0.3rem;
 }
 
-.keywordList {
-  list-style: none;
-  padding: 0;
-  margin: 0.5rem 0 0 1rem;
-}
-
-.keywordItem {
-  display: inline-block;
-  margin-right: 0.5rem;
-  padding: 0.3rem 0.5rem;
-  background-color: #e7f3ff;
+.cancelButton {
+  padding: 0.3rem 0.6rem;
+  background-color: #6c757d;
+  color: white;
+  border: none;
   border-radius: 4px;
-  font-size: 0.9rem;
-  color: #0056b3;
+  cursor: pointer;
+}
+
+.cancelButton:hover {
+  background-color: #5a6268;
 }
 
 .deleteButton {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
+  padding: 0.3rem 0.6rem;
   background-color: #dc3545;
   color: white;
   border: none;
@@ -88,4 +71,33 @@
 
 .deleteButton:hover {
   background-color: #a71d2a;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.companyDetails {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.companyDetails p {
+  margin: 0;
+  font-weight: bold;
+}
+
+.companyDetails ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+}
+
+.companyDetails li {
+  font-size: 0.85rem;
+  margin-bottom: 0.3rem;
 }
