@@ -13,6 +13,7 @@ import IndustryForm from "../@components/IndustryForm/IndustryForm.tsx";
 import {Industry} from "../@typs/Industry.ts";
 
 const App: React.FC = () => {
+    const [activeTab, setActiveTab] = useState('jsonUpload');
     const [pages, setPages] = useState<Page[]>([]);
     const [companies, setCompanies] = useState<Company[]>([]);
     const [industries, setIndustries] = useState<Industry[]>([]);
@@ -40,45 +41,68 @@ const App: React.FC = () => {
     };
 
     return (
-        <div className={styles.container}>
-            <h1 className={styles.title}>JSON CMS</h1>
-            <div className={styles.section}>
-                <h2 className={styles.sectionTitle}>JSON 업로드</h2>
-                <FileUploader onUpload={handleFileUpload}/>
+        <div className={styles.app}>
+            <h1>JSON CMS</h1>
+            {/* Tabs Navigation */}
+            <div className={styles.tabs}>
+                <button
+                    className={activeTab === 'jsonUpload' ? styles.activeTab : ''}
+                    onClick={() => setActiveTab('jsonUpload')}
+                >
+                    JSON 업로드
+                </button>
+                <button
+                    className={activeTab === 'industry' ? styles.activeTab : ''}
+                    onClick={() => setActiveTab('industry')}
+                >
+                    업종 관리
+                </button>
+                <button
+                    className={activeTab === 'company' ? styles.activeTab : ''}
+                    onClick={() => setActiveTab('company')}
+                >
+                    회사 관리
+                </button>
+                <button
+                    className={activeTab === 'page' ? styles.activeTab : ''}
+                    onClick={() => setActiveTab('page')}
+                >
+                    페이지 관리
+                </button>
+                <button
+                    className={activeTab === 'jsonPreview' ? styles.activeTab : ''}
+                    onClick={() => setActiveTab('jsonPreview')}
+                >
+                    JSON 미리보기
+                </button>
             </div>
-            <div className={styles.section}>
-                <h2 className={styles.sectionTitle}>업종 관리</h2>
-                <IndustryForm
-                    industries={industries}
-                    onUpdateIndustries={updateIndustries}
-                />
-            </div>
-            <div className={styles.section}>
-                <h2 className={styles.sectionTitle}>회사 관리</h2>
-                <CompanyForm
-                    companies={companies}
-                    industries={industries}
-                    onUpdateCompanies={updateCompanies}
-                />
-            </div>
-            <div className={styles.section}>
-                <h2 className={styles.sectionTitle}>페이지 추가</h2>
-                <PageForm
-                    companies={companies}
-                    onAddPage={addPage}
-                />
-            </div>
-            <div className={styles.section}>
-                <h2 className={styles.sectionTitle}>페이지 관리</h2>
-                <EditablePageList
-                    pages={pages}
-                    companies={companies}
-                    onUpdatePage={updatePages}
-                />
-            </div>
-            <div className={styles.section}>
-                <h2 className={styles.sectionTitle}>JSON 미리보기</h2>
-                <JSONPreview pages={pages} companies={companies} industries={industries}/>
+
+            {/* Tab Contents */}
+            <div className={styles.tabContent}>
+                {activeTab === 'jsonUpload' && <FileUploader onUpload={handleFileUpload} />}
+                {activeTab === 'industry' && (
+                    <IndustryForm industries={industries} onUpdateIndustries={updateIndustries} />
+                )}
+                {activeTab === 'company' && (
+                    <CompanyForm
+                        companies={companies}
+                        industries={industries}
+                        onUpdateCompanies={updateCompanies}
+                    />
+                )}
+                {activeTab === 'page' && (
+                    <>
+                        <PageForm onAddPage={addPage} companies={companies} />
+                        <EditablePageList
+                            pages={pages}
+                            companies={companies}
+                            onUpdatePage={updatePages}
+                        />
+                    </>
+                )}
+                {activeTab === 'jsonPreview' && (
+                    <JSONPreview pages={pages} companies={companies} industries={industries} />
+                )}
             </div>
         </div>
     );
