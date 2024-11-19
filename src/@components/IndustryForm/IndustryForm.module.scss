@@ -6,7 +6,14 @@
   border-radius: 8px;
 }
 
-.addIndustry {
+.input {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  height: 24px;
+}
+
+.add-industry {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -14,126 +21,15 @@
 }
 
 .addButton {
-  padding: 0.5rem 1rem;
+  height: 42px;
   background-color: #007bff;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   text-align: center;
-}
 
-.addButton:hover {
-  background-color: #0056b3;
-}
-
-.industryList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.industryCard {
-  padding: 0.8rem;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  position: relative;
-  font-size: 0.9rem;
-}
-
-.industrySummary {
-  cursor: pointer;
-}
-
-.industryDetails {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.keywordList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.3rem;
-}
-
-.keywordItem {
-  background-color: #e7f3ff;
-  border-radius: 4px;
-  padding: 0.3rem 0.5rem;
-  color: #0056b3;
-  font-size: 0.85rem;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-.input {
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.inputInline {
-  flex: 1;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.addKeywords {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.addButtonInline {
-  padding: 0.5rem;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  height: 100%;
-}
-
-.addButtonInline:hover {
-  background-color: #0056b3;
-}
-
-.deleteButton {
-  padding: 0.3rem 0.6rem;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.deleteButton:hover {
-  background-color: #a71d2a;
-}
-
-.cancelButton {
-  padding: 0.3rem 0.6rem;
-  background-color: #6c757d;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.cancelButton:hover {
-  background-color: #5a6268;
-}
-
-.buttonGroup {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+  &:hover {
+    background-color: #0056b3;
+  }
 }

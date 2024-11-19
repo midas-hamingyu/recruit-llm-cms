@@ -12,6 +12,7 @@ import { UploadedData } from '../@typs/UploadedData.ts';
 import FileUploader from '../@components/FileUploader/FileUploader.tsx';
 import IndustryForm from '../@components/IndustryForm/IndustryForm.tsx';
 import { Industry } from '../@typs/Industry.ts';
+import EditableIndustryList from '../@components/EditableIndustryList/EditableIndustryList.tsx';
 
 const cx = classnames.bind(styles);
 
@@ -80,10 +81,16 @@ const App: React.FC = () => {
         <FileUploader onUpload={handleFileUpload} />
       )}
       {activeTab === 'industry' && (
-        <IndustryForm
-          industries={industries}
-          onUpdateIndustries={updateIndustries}
-        />
+        <>
+          <IndustryForm
+            industries={industries}
+            onUpdateIndustries={updateIndustries}
+          />
+          <EditableIndustryList
+            industries={industries}
+            onUpdateIndustries={updateIndustries}
+          />
+        </>
       )}
       {activeTab === 'company' && (
         <CompanyForm
