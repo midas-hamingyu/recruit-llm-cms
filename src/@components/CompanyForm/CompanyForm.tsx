@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import {Company} from "../../@typs/Company.ts";
 import styles from './CompanyForm.module.scss';
+import {Company} from "../../@typs/Company.ts";
 import {Industry} from "../../@typs/Industry.ts";
 
 interface CompanyFormProps {
@@ -15,7 +15,6 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
                                                      onUpdateCompanies,
                                                  }) => {
     const [newCompany, setNewCompany] = useState<string>('');
-    const [selectedCompanyIndex, setSelectedCompanyIndex] = useState<number | null>(null);
 
     const handleAddCompany = () => {
         if (newCompany.trim() && !companies.find((c) => c.name === newCompany)) {
@@ -24,13 +23,24 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
         }
     };
 
+    const handleDeleteCompany = (index: number) => {
+        const updatedCompanies = companies.filter((_, i) => i !== index);
+        onUpdateCompanies(updatedCompanies);
+    };
+
+    const handleEditCompanyName = (index: number, newName: string) => {
+        const updatedCompanies = [...companies];
+        updatedCompanies[index].name = newName;
+        onUpdateCompanies(updatedCompanies);
+    };
+
     const handleIndustryToggle = (companyIndex: number, industryName: string) => {
         const updatedCompanies = [...companies];
         const company = updatedCompanies[companyIndex];
         const isAlreadyIncluded = company.Industry.some((ind) => ind.name === industryName);
 
         if (isAlreadyIncluded) {
-            // Remove the industry if it already exists
+            // Remove the industry
             company.Industry = company.Industry.filter((ind) => ind.name !== industryName);
         } else {
             // Add the industry
@@ -43,59 +53,66 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
         onUpdateCompanies(updatedCompanies);
     };
 
-    const handleDeleteCompany = (index: number) => {
-        const updatedCompanies = companies.filter((_, i) => i !== index);
-        onUpdateCompanies(updatedCompanies);
-        setSelectedCompanyIndex(null);
-    };
-
     return (
         <div className={styles.container}>
             <h3>회사 관리</h3>
-            <div className={styles.inputGroup}>
+            {/* Add New Company */}
+            <div className={styles.addCompany}>
                 <input
                     type="text"
                     placeholder="새로운 회사 이름"
                     value={newCompany}
                     onChange={(e) => setNewCompany(e.target.value)}
+                    className={styles.input}
                 />
-                <button onClick={handleAddCompany}>회사 추가</button>
+                <button onClick={handleAddCompany} className={styles.addButton}>
+                    회사 추가
+                </button>
             </div>
-            <ul className={styles.list}>
+
+            {/* Company List */}
+            <div className={styles.companyList}>
                 {companies.map((company, index) => (
-                    <li
-                        key={index}
-                        className={styles.listItem}
-                        onClick={() => setSelectedCompanyIndex(index)}
-                    >
-                        <strong>{company.name}</strong>
-                        <button onClick={() => handleDeleteCompany(index)}>삭제</button>
-                        {selectedCompanyIndex === index && (
-                            <div>
-                                <h4>업종 선택</h4>
-                                <ul className={styles.industryList}>
-                                    {industries.map((industry) => (
-                                        <li key={industry.name} className={styles.industryItem}>
-                                            <label>
-                                                <input
-                                                    type="checkbox"
-                                                    checked={company.Industry.some(
-                                                        (ind) => ind.name === industry.name
-                                                    )}
-                                                    onChange={() =>
-                                                        handleIndustryToggle(index, industry.name)
-                                                    }
-                                                />
-                                                {industry.name}
-                                            </label>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
-                    </li>
+                    <div key={index} className={styles.companyItem}>
+                        {/* Company Header */}
+                        <div className={styles.companyHeader}>
+                            <input
+                                type="text"
+                                value={company.name}
+                                onChange={(e) => handleEditCompanyName(index, e.target.value)}
+                                className={styles.companyNameInput}
+                            />
+                            <button
+                                onClick={() => handleDeleteCompany(index)}
+                                className={styles.deleteButton}
+                            >
+                                삭제
+                            </button>
+                        </div>
+
+                        {/* Industry Selection */}
+                        <div className={styles.industrySection}>
+                            <h4>업종 선택</h4>
+                            <ul className={styles.industryList}>
+                                {industries.map((industry) => (
+                                    <li key={industry.name} className={styles.industryItem}>
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                checked={company.Industry.some(
+                                                    (ind) => ind.name === industry.name
+                                                )}
+                                                onChange={() => handleIndustryToggle(index, industry.name)}
+                                            />
+                                            {industry.name}
+                                        </label>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
                 ))}
-            </ul>
+            </div>
         </div>
     );
 };
