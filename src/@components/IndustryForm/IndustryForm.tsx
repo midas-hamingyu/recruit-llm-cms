@@ -9,6 +9,7 @@ interface IndustryFormProps {
 
 const IndustryForm: React.FC<IndustryFormProps> = ({ industries, onUpdateIndustries }) => {
     const [newIndustry, setNewIndustry] = useState<string>('');
+    const [bulkKeywords, setBulkKeywords] = useState<{ [key: number]: string }>({});
 
     const handleAddIndustry = () => {
         if (newIndustry.trim() && !industries.find((i) => i.name === newIndustry)) {
@@ -28,26 +29,26 @@ const IndustryForm: React.FC<IndustryFormProps> = ({ industries, onUpdateIndustr
         onUpdateIndustries(updatedIndustries);
     };
 
-    const handleKeywordChange = (
-        industryIndex: number,
-        keywordIndex: number,
-        newKeyword: string
-    ) => {
-        const updatedIndustries = [...industries];
-        updatedIndustries[industryIndex].keywords[keywordIndex] = newKeyword;
-        onUpdateIndustries(updatedIndustries);
-    };
+    const handleAddBulkKeywords = (industryIndex: number) => {
+        const keywordsString = bulkKeywords[industryIndex] || '';
+        if (!keywordsString.trim()) return;
 
-    const handleAddKeyword = (industryIndex: number, newKeyword: string) => {
-        if (!newKeyword.trim()) return;
+        const keywordsArray = keywordsString
+            .split(',') // 콤마로만 분리
+            .map((keyword) => keyword.trim()) // 앞뒤 공백 제거
+            .filter((keyword) => keyword.length > 0); // 빈 키워드 제거
 
         const updatedIndustries = [...industries];
         const industry = updatedIndustries[industryIndex];
 
-        if (!industry.keywords.includes(newKeyword)) {
-            industry.keywords.push(newKeyword);
-            onUpdateIndustries(updatedIndustries);
-        }
+        industry.keywords = [...new Set([...industry.keywords, ...keywordsArray])]; // 중복 제거
+        onUpdateIndustries(updatedIndustries);
+
+        // 특정 업종의 키워드 입력 필드만 초기화
+        setBulkKeywords((prev) => ({
+            ...prev,
+            [industryIndex]: '',
+        }));
     };
 
     const handleDeleteKeyword = (industryIndex: number, keywordIndex: number) => {
@@ -101,14 +102,7 @@ const IndustryForm: React.FC<IndustryFormProps> = ({ industries, onUpdateIndustr
                             <ul className={styles.keywordList}>
                                 {industry.keywords.map((keyword, keywordIndex) => (
                                     <li key={keywordIndex} className={styles.keywordItem}>
-                                        <input
-                                            type="text"
-                                            value={keyword}
-                                            onChange={(e) =>
-                                                handleKeywordChange(industryIndex, keywordIndex, e.target.value)
-                                            }
-                                            className={styles.keywordInput}
-                                        />
+                                        {keyword}
                                         <button
                                             onClick={() =>
                                                 handleDeleteKeyword(industryIndex, keywordIndex)
@@ -120,27 +114,24 @@ const IndustryForm: React.FC<IndustryFormProps> = ({ industries, onUpdateIndustr
                                     </li>
                                 ))}
                             </ul>
-                            <div className={styles.addKeyword}>
+                            <div className={styles.bulkKeywordInputGroup}>
                                 <input
                                     type="text"
-                                    placeholder="새로운 키워드"
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            handleAddKeyword(industryIndex, e.currentTarget.value);
-                                            e.currentTarget.value = '';
-                                        }
-                                    }}
+                                    placeholder="키워드 입력 (콤마로 구분)"
+                                    value={bulkKeywords[industryIndex] || ''}
+                                    onChange={(e) =>
+                                        setBulkKeywords((prev) => ({
+                                            ...prev,
+                                            [industryIndex]: e.target.value,
+                                        }))
+                                    }
                                     className={styles.input}
                                 />
                                 <button
-                                    onClick={(e) => {
-                                        const input = e.currentTarget.previousElementSibling as HTMLInputElement;
-                                        handleAddKeyword(industryIndex, input.value);
-                                        input.value = '';
-                                    }}
+                                    onClick={() => handleAddBulkKeywords(industryIndex)}
                                     className={styles.addButton}
                                 >
-                                    추가
+                                    키워드 추가
                                 </button>
                             </div>
                         </div>
