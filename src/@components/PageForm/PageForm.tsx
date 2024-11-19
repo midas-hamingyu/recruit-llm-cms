@@ -6,100 +6,94 @@ import {Company} from "../../@typs/Company.ts";
 interface PageFormProps {
     onAddPage: (page: Page) => void;
     companies: Company[];
+    nextPageSn: number; // 다음 pageSn 값을 부모에서 관리
 }
 
-const PageForm: React.FC<PageFormProps> = ({ onAddPage, companies }) => {
-    const [page, setPage] = useState<Page>({
-        pageSn: Date.now(),
-        pageJsonUrl: '',
-        name: '',
-        companyName: '',
-        Industry: [],
-    });
+const PageForm: React.FC<PageFormProps> = ({ onAddPage, companies, nextPageSn }) => {
+    const [name, setName] = useState<string>('');
+    const [companyName, setCompanyName] = useState<string>('');
+    const [pageJsonUrl, setPageJsonUrl] = useState<string>('');
 
-    const handleCompanyChange = (companyName: string) => {
-        const selectedCompany = companies.find((company) => company.name === companyName);
-        setPage((prev) => ({
-            ...prev,
-            companyName,
-            Industry: selectedCompany ? selectedCompany.Industry : [],
-        }));
-    };
+    // 선택된 회사 정보
+    const selectedCompany = companies.find((company) => company.name === companyName);
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        onAddPage(page);
-        setPage({
-            pageSn: Date.now(),
-            pageJsonUrl: '',
-            name: '',
-            companyName: '',
-            Industry: [],
-        });
+    // 페이지 추가 함수
+    const handleAddPage = () => {
+        if (name && companyName && pageJsonUrl && selectedCompany) {
+            const newPage: Page = {
+                pageSn: nextPageSn,
+                pageJsonUrl,
+                name,
+                companyName,
+                Industry: selectedCompany.Industry, // 회사의 업종을 추가
+            };
+
+            // 부모 컴포넌트로 페이지 전달
+            onAddPage(newPage);
+
+            // 입력 필드 초기화
+            setName('');
+            setCompanyName('');
+            setPageJsonUrl('');
+        }
     };
 
     return (
-        <form className={styles.container} onSubmit={handleSubmit}>
-            <h3 className={styles.title}>페이지 추가</h3>
+        <div className={styles.container}>
+            <h3>페이지 추가</h3>
             <div className={styles.formGroup}>
-                <label className={styles.label}>JSON URL:</label>
-                <input
-                    type="text"
-                    className={styles.input}
-                    value={page.pageJsonUrl}
-                    onChange={(e) =>
-                        setPage({...page, pageJsonUrl: e.target.value})
-                    }
-                />
-            </div>
-            <div className={styles.formGroup}>
-                <label className={styles.label}>페이지 이름:</label>
-                <input
-                    type="text"
-                    className={styles.input}
-                    value={page.name}
-                    onChange={(e) => setPage({...page, name: e.target.value})}
-                />
-            </div>
-            <div className={styles.formGroup}>
-                <label className={styles.label}>기업명:</label>
-                <select
-                    className={styles.select}
-                    value={page.companyName}
-                    onChange={(e) => handleCompanyChange(e.target.value)}
-                >
-                    <option value="">선택하세요</option>
-                    {companies.map((company) => (
-                        <option key={company.name} value={company.name}>
-                            {company.name}
-                        </option>
-                    ))}
-                </select>
-            </div>
-            {page.companyName && (
-                <div className={styles.formGroup}>
-                    <label className={styles.label}>업종 및 키워드:</label>
-                    <ul className={styles.industryList}>
-                        {page.Industry.map((industry) => (
-                            <li key={industry.name} className={styles.industryItem}>
-                                <div className={styles.industryName}>{industry.name}</div>
-                                <ul className={styles.keywordList}>
-                                    {industry.keywords.map((keyword, index) => (
-                                        <li key={index} className={styles.keywordItem}>
-                                            {keyword}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </li>
+                <label className={styles.label}>
+                    페이지 이름
+                    <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="페이지 이름 입력"
+                        className={styles.input}
+                    />
+                </label>
+                <label className={styles.label}>
+                    JSON URL
+                    <input
+                        type="text"
+                        value={pageJsonUrl}
+                        onChange={(e) => setPageJsonUrl(e.target.value)}
+                        placeholder="JSON URL 입력"
+                        className={styles.input}
+                    />
+                </label>
+                <label className={styles.label}>
+                    회사명
+                    <select
+                        value={companyName}
+                        onChange={(e) => setCompanyName(e.target.value)}
+                        className={styles.select}
+                    >
+                        <option value="">회사 선택</option>
+                        {companies.map((company) => (
+                            <option key={company.name} value={company.name}>
+                                {company.name}
+                            </option>
                         ))}
-                    </ul>
-                </div>
-            )}
-
-            <button type="submit" className={styles.button}>
-                페이지 추가
-            </button>
-        </form>
+                    </select>
+                </label>
+                {selectedCompany && (
+                    <div className={styles.companyDetails}>
+                        <p>업종:</p>
+                        <ul>
+                            {selectedCompany.Industry.map((industry) => (
+                                <li key={industry.name}>
+                                    {industry.name} - 키워드: {industry.keywords.join(', ')}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+                <button onClick={handleAddPage} className={styles.addButton}>
+                    페이지 추가
+                </button>
+            </div>
+        </div>
     );
 };
 
