@@ -9,18 +9,25 @@ interface IndustryFormProps {
 
 const IndustryForm: React.FC<IndustryFormProps> = ({ industries, onUpdateIndustries }) => {
     const [newIndustry, setNewIndustry] = useState<string>('');
-    const [bulkKeywords, setBulkKeywords] = useState<{ [key: number]: string }>({});
+    const [newKeywords, setNewKeywords] = useState<string>('');
+    const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+    const [additionalKeyword, setAdditionalKeyword] = useState<string>('');
 
     const handleAddIndustry = () => {
-        if (newIndustry.trim() && !industries.find((i) => i.name === newIndustry)) {
-            onUpdateIndustries([...industries, { name: newIndustry, keywords: [] }]);
-            setNewIndustry('');
-        }
-    };
+        if (newIndustry.trim()) {
+            const keywordsArray = newKeywords
+                .split(',')
+                .map((keyword) => keyword.trim())
+                .filter((keyword) => keyword.length > 0);
 
-    const handleDeleteIndustry = (index: number) => {
-        const updatedIndustries = industries.filter((_, i) => i !== index);
-        onUpdateIndustries(updatedIndustries);
+            onUpdateIndustries([
+                ...industries,
+                { name: newIndustry, keywords: [...new Set(keywordsArray)] },
+            ]);
+
+            setNewIndustry('');
+            setNewKeywords('');
+        }
     };
 
     const handleEditIndustryName = (index: number, newName: string) => {
@@ -29,38 +36,36 @@ const IndustryForm: React.FC<IndustryFormProps> = ({ industries, onUpdateIndustr
         onUpdateIndustries(updatedIndustries);
     };
 
-    const handleAddBulkKeywords = (industryIndex: number) => {
-        const keywordsString = bulkKeywords[industryIndex] || '';
-        if (!keywordsString.trim()) return;
+    const handleAddKeywords = (index: number) => {
+        if (!additionalKeyword.trim()) return;
 
-        const keywordsArray = keywordsString
-            .split(',') // 콤마로만 분리
-            .map((keyword) => keyword.trim()) // 앞뒤 공백 제거
-            .filter((keyword) => keyword.length > 0); // 빈 키워드 제거
+        const keywordsArray = additionalKeyword
+            .split(',')
+            .map((keyword) => keyword.trim())
+            .filter((keyword) => keyword.length > 0);
 
         const updatedIndustries = [...industries];
-        const industry = updatedIndustries[industryIndex];
-
-        industry.keywords = [...new Set([...industry.keywords, ...keywordsArray])]; // 중복 제거
+        updatedIndustries[index].keywords = [
+            ...new Set([...updatedIndustries[index].keywords, ...keywordsArray]),
+        ];
         onUpdateIndustries(updatedIndustries);
-
-        // 특정 업종의 키워드 입력 필드만 초기화
-        setBulkKeywords((prev) => ({
-            ...prev,
-            [industryIndex]: '',
-        }));
+        setAdditionalKeyword('');
     };
 
-    const handleDeleteKeyword = (industryIndex: number, keywordIndex: number) => {
+    const handleDeleteKeyword = (index: number, keywordIndex: number) => {
         const updatedIndustries = [...industries];
-        updatedIndustries[industryIndex].keywords.splice(keywordIndex, 1);
+        updatedIndustries[index].keywords.splice(keywordIndex, 1);
+        onUpdateIndustries(updatedIndustries);
+    };
+
+    const handleDeleteIndustry = (index: number) => {
+        const updatedIndustries = industries.filter((_, i) => i !== index);
         onUpdateIndustries(updatedIndustries);
     };
 
     return (
         <div className={styles.container}>
             <h3>업종 관리</h3>
-            {/* Add New Industry */}
             <div className={styles.addIndustry}>
                 <input
                     type="text"
@@ -69,72 +74,83 @@ const IndustryForm: React.FC<IndustryFormProps> = ({ industries, onUpdateIndustr
                     onChange={(e) => setNewIndustry(e.target.value)}
                     className={styles.input}
                 />
+                <input
+                    type="text"
+                    placeholder="키워드 입력 (콤마로 구분)"
+                    value={newKeywords}
+                    onChange={(e) => setNewKeywords(e.target.value)}
+                    className={styles.input}
+                />
                 <button onClick={handleAddIndustry} className={styles.addButton}>
                     업종 추가
                 </button>
             </div>
 
-            {/* Industry List */}
             <div className={styles.industryList}>
-                {industries.map((industry, industryIndex) => (
-                    <div key={industryIndex} className={styles.industryItem}>
-                        {/* Editable Industry Name */}
-                        <div className={styles.industryHeader}>
-                            <input
-                                type="text"
-                                value={industry.name}
-                                onChange={(e) =>
-                                    handleEditIndustryName(industryIndex, e.target.value)
-                                }
-                                className={styles.industryNameInput}
-                            />
-                            <button
-                                onClick={() => handleDeleteIndustry(industryIndex)}
-                                className={styles.deleteButton}
-                            >
-                                삭제
-                            </button>
-                        </div>
-
-                        {/* Keyword Section */}
-                        <div className={styles.keywordSection}>
-                            <h4>키워드</h4>
-                            <ul className={styles.keywordList}>
-                                {industry.keywords.map((keyword, keywordIndex) => (
-                                    <li key={keywordIndex} className={styles.keywordItem}>
-                                        {keyword}
-                                        <button
-                                            onClick={() =>
-                                                handleDeleteKeyword(industryIndex, keywordIndex)
-                                            }
-                                            className={styles.deleteButton}
-                                        >
-                                            삭제
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                            <div className={styles.bulkKeywordInputGroup}>
+                {industries.map((industry, index) => (
+                    <div key={index} className={styles.industryCard}>
+                        {expandedIndex === index ? (
+                            <div className={styles.industryDetails}>
                                 <input
                                     type="text"
-                                    placeholder="키워드 입력 (콤마로 구분)"
-                                    value={bulkKeywords[industryIndex] || ''}
+                                    value={industry.name}
                                     onChange={(e) =>
-                                        setBulkKeywords((prev) => ({
-                                            ...prev,
-                                            [industryIndex]: e.target.value,
-                                        }))
+                                        handleEditIndustryName(index, e.target.value)
                                     }
                                     className={styles.input}
                                 />
-                                <button
-                                    onClick={() => handleAddBulkKeywords(industryIndex)}
-                                    className={styles.addButton}
-                                >
-                                    키워드 추가
-                                </button>
+                                <ul className={styles.keywordList}>
+                                    {industry.keywords.map((keyword, keywordIndex) => (
+                                        <li key={keywordIndex} className={styles.keywordItem}>
+                                            {keyword}
+                                            <button
+                                                onClick={() => handleDeleteKeyword(index, keywordIndex)}
+                                                className={styles.deleteButton}
+                                            >
+                                                삭제
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                                <div className={styles.addKeywords}>
+                                    <input
+                                        type="text"
+                                        placeholder="추가 키워드 입력 (콤마로 구분)"
+                                        value={additionalKeyword}
+                                        onChange={(e) => setAdditionalKeyword(e.target.value)}
+                                        className={styles.inputInline}
+                                    />
+                                    <button
+                                        onClick={() => handleAddKeywords(index)}
+                                        className={styles.addButtonInline}
+                                    >
+                                        추가
+                                    </button>
+                                </div>
+                                <div className={styles.buttonGroup}>
+                                    <button
+                                        onClick={() => setExpandedIndex(null)}
+                                        className={styles.cancelButton}
+                                    >
+                                        닫기
+                                    </button>
+                                    <button
+                                        onClick={() => handleDeleteIndustry(index)}
+                                        className={styles.deleteButton}
+                                    >
+                                        삭제
+                                    </button>
+                                </div>
                             </div>
-                        </div>
+                        ) : (
+                            <div
+                                className={styles.industrySummary}
+                                onClick={() => setExpandedIndex(index)}
+                            >
+                                <h4>{industry.name}</h4>
+                                <p>키워드: {industry.keywords.join(', ') || '없음'}</p>
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>
