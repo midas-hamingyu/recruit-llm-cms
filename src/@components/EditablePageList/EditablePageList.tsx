@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
-import {Page} from "../../@typs/Page.ts";
+import React, { useState, useEffect } from 'react';
 import styles from './EditablePageList.module.scss';
+import {Page} from "../../@typs/Page.ts";
 import {Company} from "../../@typs/Company.ts";
 
 interface EditablePageListProps {
@@ -16,25 +16,63 @@ const EditablePageList: React.FC<EditablePageListProps> = ({ pages, companies, o
         setEditPages(pages);
     }, [pages]);
 
-    const handleCompanyChange = (index: number, companyName: string) => {
-        const selectedCompany = companies.find((company) => company.name === companyName);
+    const handleInputChange = (
+        index: number,
+        field: keyof Page,
+        value: string | number
+    ) => {
         const updatedPages = [...editPages];
-        updatedPages[index].companyName = companyName;
-        updatedPages[index].Industry = selectedCompany ? selectedCompany.Industry : [];
+        updatedPages[index] = { ...updatedPages[index], [field]: value };
+
+        if (field === 'companyName') {
+            const selectedCompany = companies.find((company) => company.name === value);
+            updatedPages[index].Industry = selectedCompany ? selectedCompany.Industry : [];
+        }
+
+        setEditPages(updatedPages);
+        onUpdatePage(updatedPages);
+    };
+
+    const handleDelete = (index: number) => {
+        const updatedPages = [...editPages];
+        updatedPages.splice(index, 1);
         setEditPages(updatedPages);
         onUpdatePage(updatedPages);
     };
 
     return (
         <div className={styles.container}>
-            <h3>수정 가능한 페이지 리스트</h3>
+            <h3 className={styles.title}>페이지 리스트 관리</h3>
             {editPages.map((page, index) => (
                 <div key={page.pageSn} className={styles.pageItem}>
-                    <div>
-                        <label>기업명:</label>
+                    <div className={styles.formGroup}>
+                        <label className={styles.label}>JSON URL:</label>
+                        <input
+                            type="text"
+                            className={styles.input}
+                            value={page.pageJsonUrl}
+                            onChange={(e) =>
+                                handleInputChange(index, 'pageJsonUrl', e.target.value)
+                            }
+                        />
+                    </div>
+                    <div className={styles.formGroup}>
+                        <label className={styles.label}>페이지 이름:</label>
+                        <input
+                            type="text"
+                            className={styles.input}
+                            value={page.name}
+                            onChange={(e) => handleInputChange(index, 'name', e.target.value)}
+                        />
+                    </div>
+                    <div className={styles.formGroup}>
+                        <label className={styles.label}>기업명:</label>
                         <select
+                            className={styles.select}
                             value={page.companyName}
-                            onChange={(e) => handleCompanyChange(index, e.target.value)}
+                            onChange={(e) =>
+                                handleInputChange(index, 'companyName', e.target.value)
+                            }
                         >
                             <option value="">선택하세요</option>
                             {companies.map((company) => (
@@ -44,16 +82,31 @@ const EditablePageList: React.FC<EditablePageListProps> = ({ pages, companies, o
                             ))}
                         </select>
                     </div>
-                    <div>
-                        <h4>업종</h4>
-                        <ul>
-                            {page.Industry.map((industry, industryIndex) => (
-                                <li key={industryIndex}>
-                                    <strong>{industry.name}</strong>: {industry.keywords.join(', ')}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                    {page.companyName && (
+                        <div className={styles.formGroup}>
+                            <label className={styles.label}>업종 및 키워드:</label>
+                            <ul className={styles.industryList}>
+                                {page.Industry.map((industry) => (
+                                    <li key={industry.name} className={styles.industryItem}>
+                                        <div className={styles.industryName}>{industry.name}</div>
+                                        <ul className={styles.keywordList}>
+                                            {industry.keywords.map((keyword, idx) => (
+                                                <li key={idx} className={styles.keywordItem}>
+                                                    {keyword}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                    <button
+                        className={styles.deleteButton}
+                        onClick={() => handleDelete(index)}
+                    >
+                        삭제
+                    </button>
                 </div>
             ))}
         </div>
