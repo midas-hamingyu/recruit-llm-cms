@@ -1,8 +1,9 @@
 import React from 'react';
-import {Page} from "../@typs/Page.ts";
+import styles from './FileUploader.module.scss';
+import {UploadedData} from "../../@typs/UploadedData.ts";
 
 interface FileUploaderProps {
-    onUpload: (pages: Page[]) => void;
+    onUpload: (uploadedData: UploadedData) => void;
 }
 
 const FileUploader: React.FC<FileUploaderProps> = ({ onUpload }) => {
@@ -13,12 +14,8 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUpload }) => {
         const reader = new FileReader();
         reader.onload = () => {
             try {
-                const json = JSON.parse(reader.result as string);
-                if (json.pageList && Array.isArray(json.pageList)) {
-                    onUpload(json.pageList);
-                } else {
-                    alert('올바른 JSON 파일 형식이 아닙니다.');
-                }
+                const json: UploadedData = JSON.parse(reader.result as string);
+                onUpload(json);
             } catch (error) {
                 alert('JSON 파일을 파싱하는 중 오류가 발생했습니다.');
             }
@@ -27,9 +24,14 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onUpload }) => {
     };
 
     return (
-        <div>
-            <h3>JSON 업로드</h3>
-            <input type="file" accept="application/json" onChange={handleFileUpload} />
+        <div className={styles.container}>
+            <label className={styles.label}>JSON 파일 업로드</label>
+            <input
+                type="file"
+                accept="application/json"
+                className={styles.input}
+                onChange={handleFileUpload}
+            />
         </div>
     );
 };

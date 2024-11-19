@@ -3,4 +3,5 @@ export interface Page {
     pageJsonUrl: string;
     name: string;
     companyName: string;
+    Industry: string[];
 }
