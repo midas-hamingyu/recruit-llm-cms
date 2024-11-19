@@ -6,10 +6,9 @@ import {Company} from "../../@typs/Company.ts";
 interface PageFormProps {
     onAddPage: (page: Page) => void;
     companies: Company[];
-    nextPageSn: number; // 다음 pageSn 값을 부모에서 관리
 }
 
-const PageForm: React.FC<PageFormProps> = ({ onAddPage, companies, nextPageSn }) => {
+const PageForm: React.FC<PageFormProps> = ({ onAddPage, companies }) => {
     const [name, setName] = useState<string>('');
     const [companyName, setCompanyName] = useState<string>('');
     const [pageJsonUrl, setPageJsonUrl] = useState<string>('');
@@ -21,7 +20,7 @@ const PageForm: React.FC<PageFormProps> = ({ onAddPage, companies, nextPageSn })
     const handleAddPage = () => {
         if (name && companyName && pageJsonUrl && selectedCompany) {
             const newPage: Page = {
-                pageSn: nextPageSn,
+                pageSn: Date.now(),
                 pageJsonUrl,
                 name,
                 companyName,
