@@ -76,41 +76,39 @@ const App: React.FC = () => {
       </div>
 
       {/* Tab Contents */}
-      <div className={cx('tab-content')}>
-        {activeTab === 'jsonUpload' && (
-          <FileUploader onUpload={handleFileUpload} />
-        )}
-        {activeTab === 'industry' && (
-          <IndustryForm
-            industries={industries}
-            onUpdateIndustries={updateIndustries}
-          />
-        )}
-        {activeTab === 'company' && (
-          <CompanyForm
-            companies={companies}
-            industries={industries}
-            onUpdateCompanies={updateCompanies}
-          />
-        )}
-        {activeTab === 'page' && (
-          <>
-            <PageForm onAddPage={addPage} companies={companies} />
-            <EditablePageList
-              pages={pages}
-              companies={companies}
-              onUpdatePages={updatePages}
-            />
-          </>
-        )}
-        {activeTab === 'jsonPreview' && (
-          <JSONPreview
+      {activeTab === 'jsonUpload' && (
+        <FileUploader onUpload={handleFileUpload} />
+      )}
+      {activeTab === 'industry' && (
+        <IndustryForm
+          industries={industries}
+          onUpdateIndustries={updateIndustries}
+        />
+      )}
+      {activeTab === 'company' && (
+        <CompanyForm
+          companies={companies}
+          industries={industries}
+          onUpdateCompanies={updateCompanies}
+        />
+      )}
+      {activeTab === 'page' && (
+        <>
+          <PageForm onAddPage={addPage} companies={companies} />
+          <EditablePageList
             pages={pages}
             companies={companies}
-            industries={industries}
+            onUpdatePages={updatePages}
           />
-        )}
-      </div>
+        </>
+      )}
+      {activeTab === 'jsonPreview' && (
+        <JSONPreview
+          pages={pages}
+          companies={companies}
+          industries={industries}
+        />
+      )}
     </div>
   );
 };
