@@ -35,24 +35,24 @@ const App: React.FC = () => {
         <div className={styles.container}>
             <h1 className={styles.title}>JSON CMS</h1>
             <div className={styles.section}>
+                <h2 className={styles.sectionTitle}>JSON 업로드</h2>
+                <FileUploader onUpload={handleFileUpload}/>
+            </div>
+            <div className={styles.section}>
                 <h2 className={styles.sectionTitle}>회사 관리</h2>
-                <CompanyForm companies={companies} onUpdateCompanies={updateCompanies} />
+                <CompanyForm companies={companies} onUpdateCompanies={updateCompanies}/>
             </div>
             <div className={styles.section}>
                 <h2 className={styles.sectionTitle}>페이지 추가</h2>
-                <PageForm onAddPage={addPage} companies={companies} />
+                <PageForm onAddPage={addPage} companies={companies}/>
             </div>
             <div className={styles.section}>
                 <h2 className={styles.sectionTitle}>페이지 리스트</h2>
-                <EditablePageList pages={pages} companies={companies} onUpdatePage={updatePages} />
-            </div>
-            <div className={styles.section}>
-                <h2 className={styles.sectionTitle}>JSON 업로드</h2>
-                <FileUploader onUpload={handleFileUpload} />
+                <EditablePageList pages={pages} companies={companies} onUpdatePage={updatePages}/>
             </div>
             <div className={styles.section}>
                 <h2 className={styles.sectionTitle}>JSON 미리보기</h2>
-                <JSONPreview pages={pages} companies={companies} />
+                <JSONPreview pages={pages} companies={companies}/>
             </div>
         </div>
     );
