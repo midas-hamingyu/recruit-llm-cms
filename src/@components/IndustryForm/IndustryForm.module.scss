@@ -18,19 +18,14 @@
 }
 
 .listItem {
-  margin-bottom: 1rem;
-  padding: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #ffffff;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.5rem;
 }
 
-.industryList {
-  list-style: none;
-  padding: 0;
-  margin-top: 0.5rem;
-}
-
-.industryItem {
+.keywordGroup {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
   margin-bottom: 0.5rem;
 }

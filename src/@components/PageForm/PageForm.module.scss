@@ -17,16 +17,21 @@
   margin-bottom: 0.5rem;
 }
 
-.input {
+.input,
+.select {
   padding: 0.5rem;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.select {
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+.industryList {
+  list-style: none;
+  padding: 0;
+  margin-top: 0.5rem;
+}
+
+.industryItem {
+  margin-bottom: 0.5rem;
 }
 
 .button {
@@ -41,15 +46,4 @@
 
 .button:hover {
   background-color: #0056b3;
-}
-
-.industryList {
-  list-style: none;
-  padding: 0;
-  margin-top: 1rem;
-}
-
-.industryItem {
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #eee;
 }

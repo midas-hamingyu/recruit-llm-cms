@@ -1,4 +1,6 @@
+import {Industry} from "./Industry.ts";
+
 export interface Company {
     name: string;
-    Industry: string[];
+    Industry: Industry[];
 }

@@ -6,6 +6,10 @@ interface FileUploaderProps {
     onUpload: (uploadedData: UploadedData) => void;
 }
 
+interface FileUploaderProps {
+    onUpload: (uploadedData: UploadedData) => void;
+}
+
 const FileUploader: React.FC<FileUploaderProps> = ({ onUpload }) => {
     const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
